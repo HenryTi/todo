@@ -1,1 +1,4 @@
 import JKHr = 百灵威系统工程部/hr;
+
+TUID Employee from JKHr;
+TUID Role from JKHr;
