@@ -5,6 +5,7 @@ import { UQs } from "./tonvaApp/uqs";
 import { VMain } from './tonvaApp/main';
 import { CMe } from "me/CMe";
 import { CHome } from "home/CHome";
+import { CSetting } from "setting/CSetting";
 /*
 import { CMe } from "./me/CMe";
 import { CPosts } from "./posts/CPosts";
@@ -17,6 +18,7 @@ export class CApp extends CAppBase {
 
     cHome: CHome;
     cMe: CMe;
+    cSetting: CSetting;
     /*
     cPosts: CPosts;
     cMedia: CMedia;
@@ -30,6 +32,7 @@ export class CApp extends CAppBase {
     protected async internalStart() {
         this.cHome = this.newC(CHome);
         this.cMe = this.newC(CMe);
+        this.cSetting = this.newC(CSetting);
         /*
         this.cPosts = this.newC(CPosts);
         this.cMedia = this.newC(CMedia);

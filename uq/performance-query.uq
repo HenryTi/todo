@@ -1,0 +1,13 @@
+QUERY getRoleScoreItem()
+returns ret(
+    scoreItem ID ScoreItem,             --积分项
+    role ID Role,                       --岗位
+    CalculationFormula char(1000),      --计算公式
+    CreateTime datetime,
+    user id [$user]
+) {
+    into ret SELECT	a.scoreItem, a.role, a.CalculationFormula, a.CreateTime, a.user
+	FROM    RoleScoreItem AS a
+    where   a.IsValid=1
+    order by a.scoreItem;
+};

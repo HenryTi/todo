@@ -1,8 +1,8 @@
 --计分项表
 TUID ScoreItem (
     id,
-    name char(100) not null,            --计分项名
-    CalculationFormula char(1000),      --计算公式
+    main name char(100) not null,            --计分项名
+    main CalculationFormula char(1000),      --计算公式
     IsValid smallint not null default 1,--是否有效
     CreateTime datetime,
     user id [$user],
@@ -21,8 +21,8 @@ MAP RoleScoreItem (
 --参数配置表
 TUID ParameterConfiguration (
     id,
-    name char(100) not null,            --参数名
-    Value char(1000),                   --参数值
+    main name char(100) not null,            --参数名
+    main Value char(1000),                   --参数值
     CreateTime datetime,
     user id [$user],
 );
