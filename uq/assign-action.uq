@@ -229,7 +229,7 @@ ACTION SendAssign ver 1.2 (
 			BOOK TaskState AT(taskId) SET state=0;
 			SET seq = IFNULL((SELECT max(seq) FROM TaskFlow WHERE task=taskId), 0) + 1;
 			BOOK TaskFlow AT(taskId, seq) SET user=$user, state=0;
-			FOREACH (VAR itemId ID OF SELECT a.id as itemId FROM AssignItem as a WHERE a.assign=assignId) {
+			FOREACH (VAR itemId ID OF SELECT a.id as itemId FROM AssignItem as a WHERE a.assign=assignId and a.x=0) {
 				VAR todoId ID;
         		TUID Todo INTO todoId SET task=taskId, assignItem=itemId;
 			}

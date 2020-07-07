@@ -19,6 +19,7 @@ TUID AssignItem (
 	id,
 	assign ID Assign,
 	discription TEXT,
+	x TINYINT DEFAULT 0,				-- 0: normal, 1: deleted
 	INDEX assign_id(assign, id) UNIQUE,
 );
 
@@ -135,6 +136,7 @@ RETURNS assign (
 RETURNS items (
 	id ID,
 	discription TEXT,
+	x TINYINT,
 )
 RETURNS tasks (
 	id ID,
@@ -174,7 +176,7 @@ RETURNS toList (
 		, a.[$update]
 		FROM Assign as a JOIN AssignEx as b on a.id=b.assign
 		WHERE a.id=assignId;
-	INTO items SELECT a.id, a.discription
+	INTO items SELECT a.id, a.discription, a.x
 		FROM AssignItem as a
 		WHERE a.assign=assignId
 		ORDER BY a.id;

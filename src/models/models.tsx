@@ -67,6 +67,7 @@ export interface Assign {
 export interface AssignItem {
 	id: number;
 	discription: string;
+	x: number;
 }
 
 export interface AssignTask {

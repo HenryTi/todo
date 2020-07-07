@@ -7,6 +7,7 @@ import { Assign, AssignTask, AssignItem, Todo } from 'models';
 import { VFooterInput, FooterInputProps } from './VFooterInput';
 import { stateText } from 'tapp';
 import { InfoInputProps, VInfoInput } from './VInfoInput';
+import { VEditTextItemInput, EditTextItemProps } from './VEditTextItem';
 
 export const vStopFlag = <FA name="square-o" className="text-danger small" />;
 
@@ -53,10 +54,28 @@ export abstract class VAssign<T extends CAssigns> extends VBase<T> {
 	protected renderAssignItem(item:AssignItem) {
 		let icon = 'circle';
 		let cnIcon = 'text-primary';
-		let {id, discription} = item;
+		let {id, discription, x} = item;
+		let eIcon = x === 1? 'undo' : 'minus-circle';
+		let eColor = x === 1? 'text-success' : 'text-danger'
+		let onCutUndo = () => {
+			this.controller.setAssignItemFlag(item, x === 1? 0: 1);
+		}
+
+		let onUpdate = async (v:string) => {
+			await this.controller.setAssignItemContent(item, v);
+		}
+		let eprops:EditTextItemProps = {
+			onUpdate:onUpdate, content:discription, header:'编辑事项'}
+
+		let vEdit = new VEditTextItemInput(this.controller, eprops);
+
 		return <div key={id} className="pl-5 pr-3 py-2 d-flex align-items-center bg-white border-top">
-			<small><small><FA name={icon} className={cnIcon} fixWidth={true} /></small></small>
-			<div className="flex-fill ml-3">{discription}</div>
+			<small><FA name={icon} className={cnIcon} fixWidth={true} /></small>
+			{x === 1?<del className="flex-fill ml-3">{discription}</del>:
+			 <div className="flex-fill ml-3 cursor-ponter" onClick={vEdit.onUpdate}>{discription}</div>}
+			<div className="p-2 cursor-pointer" onClick={onCutUndo}>
+      	<FA name={eIcon} className={eColor} />
+    	</div>
 		</div>
 	}
 
@@ -93,7 +112,7 @@ export abstract class VAssign<T extends CAssigns> extends VBase<T> {
 	}
 
 	protected renderTodo (todo:Todo, index:number):JSX.Element {
-		let {id, discription, done, doneMemo} = todo;
+		let {id, discription, done, doneMemo, x} = todo;
 		let onCheckChanged = async (isChecked:boolean):Promise<void> => {
 			await this.controller.saveTodoDone(todo, isChecked?1:0);
 			return;
@@ -102,19 +121,36 @@ export abstract class VAssign<T extends CAssigns> extends VBase<T> {
 			if (!onCheckChanged) return;
 			onCheckChanged(evt.target.checked);
 		}
+		let eIcon = x === 1? 'undo' : 'minus-circle';
+		let eColor = x === 1? 'text-success' : 'text-danger'
+		let onCutUndo = () => {
+			this.controller.setTodoFlag(todo, x === 1? 0: 1);
+		}
+		let onUpdate = async (v:string) => {
+			await this.controller.saveTodoContent(todo, v);
+		}
+		let eprops:EditTextItemProps = {
+			onUpdate:onUpdate, content:discription, header:'编辑事项'
+		}
+
+		let vEdit = new VEditTextItemInput(this.controller, eprops);
 
 		return <div className={'d-flex bg-white '}>
 			<label key={id} className="flex-grow-1 px-3 py-2 m-0 d-flex cursor-point">
-				<input className="mt-1 mr-3" type="checkbox" onChange={onChange} defaultChecked={done === 1}/>
+				<input className="mt-1 mr-3" type="checkbox" onChange={onChange} defaultChecked={done === 1} disabled={x === 1}/>
 				<div className="flex-grow-1">
-					<div className="">{discription}</div>
-					{doneMemo && <div className="mt-1 small">
+					{x===1?<del className="">{discription}</del>:
+						<div className="cursor-pointer" onClick={e => {e.preventDefault();vEdit.onUpdate()} }>{discription}</div> }
+					{x!==1 && doneMemo && <div className="mt-1 small">
 						<FA name="comment-o" className="mr-2 text-primary" />
 						<span className="text-info">{doneMemo}</span>
 					</div>}
 				</div>
 			</label>
-			{this.renderMemo(todo)}
+			{x !== 1 && this.renderMemo(todo)}
+			<div className="p-2 cursor-pointer" onClick={onCutUndo}>
+      	<FA name={eIcon} className={eColor} />
+    	</div>
 		</div>
 	}
 
