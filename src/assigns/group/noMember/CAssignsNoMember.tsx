@@ -23,6 +23,8 @@ export class CAssignsNoMember extends CAssignsForGroup {
 		let assignItem: number = undefined;
 		let {tasks} = this.assign;
 		let my = tasks.find(v => this.isMe(v.worker));
+		if (!my)
+			return;
 
 		let todo = {
 			id: id, 

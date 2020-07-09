@@ -117,6 +117,26 @@ export abstract class CAssigns extends CUqBase {
 		item.discription = v;
 	}
 
+	selfDone = async () => {
+		let {tasks} = this.assign;
+		let task = tasks.find(v=>this.isMe(v.worker));
+		if (task) {
+			this.openVPage(VDone, task);
+		}
+		else {
+			let toList:{to:number}[] = [];
+			toList.push({to:this.user.id});
+			let data = {
+				assignId: this.assign.id,
+				toList
+			};
+			await this.uqs.performance.SendAssign.submit(data);
+			await this.loadAssign(this.assign.id);
+			this.backPage();
+			this.openVAssign();
+		}
+	}
+	
 	showDone = async () => {
 		let {tasks} = this.assign;
 		let task = tasks.find(v=>this.isMe(v.worker));

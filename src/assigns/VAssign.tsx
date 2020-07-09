@@ -52,30 +52,37 @@ export abstract class VAssign<T extends CAssigns> extends VBase<T> {
 	}
 
 	protected renderAssignItem(item:AssignItem) {
+		let ismy = this.isMe(this.assign.owner);
+		let {id, discription, x} = item;
+		let oinfo:JSX.Element = undefined;
 		let icon = 'circle';
 		let cnIcon = 'text-primary';
-		let {id, discription, x} = item;
-		let eIcon = x === 1? 'undo' : 'minus-circle';
-		let eColor = x === 1? 'text-success' : 'text-danger'
-		let onCutUndo = () => {
-			this.controller.setAssignItemFlag(item, x === 1? 0: 1);
+		if (ismy) {
+			let eIcon = x === 1? 'undo' : 'minus-circle';
+			let eColor = x === 1? 'text-success' : 'text-danger'
+			let onCutUndo = () => {
+				this.controller.setAssignItemFlag(item, x === 1? 0: 1);
+			}
+			let onUpdate = async (v:string) => {
+				await this.controller.setAssignItemContent(item, v);
+			}
+			let eprops:EditTextItemProps = {onUpdate:onUpdate, content:discription, header:'编辑事项'}
+			let vEdit = new VEditTextItemInput(this.controller, eprops);
+			oinfo = <>{x === 1?<del className="flex-fill ml-3">{discription}</del>:
+				<div className="flex-fill ml-3 cursor-ponter" onClick={vEdit.onUpdate}>{discription}</div>}
+		 		<div className="p-2 cursor-pointer" onClick={onCutUndo}>
+			 		<FA name={eIcon} className={eColor} />
+		 		</div>
+			</>
 		}
-
-		let onUpdate = async (v:string) => {
-			await this.controller.setAssignItemContent(item, v);
+		else {
+			oinfo = x === 1?<del className="flex-fill ml-3">{discription}</del>:
+			<div className="flex-fill ml-3" >{discription}</div>
 		}
-		let eprops:EditTextItemProps = {
-			onUpdate:onUpdate, content:discription, header:'编辑事项'}
-
-		let vEdit = new VEditTextItemInput(this.controller, eprops);
 
 		return <div key={id} className="pl-5 pr-3 py-2 d-flex align-items-center bg-white border-top">
 			<small><FA name={icon} className={cnIcon} fixWidth={true} /></small>
-			{x === 1?<del className="flex-fill ml-3">{discription}</del>:
-			 <div className="flex-fill ml-3 cursor-ponter" onClick={vEdit.onUpdate}>{discription}</div>}
-			<div className="p-2 cursor-pointer" onClick={onCutUndo}>
-      	<FA name={eIcon} className={eColor} />
-    	</div>
+			{oinfo}
 		</div>
 	}
 
@@ -200,7 +207,7 @@ export class VAssignDraft<T extends CAssigns> extends VAssign<T> {
 	protected get selfDoneCaption():string {return '自己完成';}
 	protected renderSelfDone() {
 		return <div className="px-3 py-2 border-top bg-white cursor-pointer"
-			onClick={this.controller.showDone}>
+			onClick={this.controller.selfDone}>
 			<FA className="mr-3 text-danger" name="chevron-circle-right" fixWidth={true} /> {this.selfDoneCaption}
 		</div>;
 	}
